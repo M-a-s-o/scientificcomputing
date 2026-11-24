@@ -157,11 +157,13 @@ def exercise_09() -> None:
             random.shuffle(self.cards)
 
         def get_cards(self, num: int = 1):
-            # hand: list[Card] = []
-            # for n in range(num):
-            #    hand.append(self.cards.pop())
+            hand: list[Card] = []
+            for n in range(num):
+                hand.append(self.cards.pop())
 
-            # return hand
+            return hand
+
+        def get_first_n_cards(self, num: int = 1):
             return self.cards[:num]
 
         def __str__(self):
@@ -175,7 +177,7 @@ def exercise_09() -> None:
     samples = 100_000
     for _ in range(samples):
         deck.shuffle()
-        cards = deck.get_cards(5)
+        cards = deck.get_first_n_cards(5)
         counts = defaultdict(list)
         for card in cards:
             counts[card.rank].append(card.suit)
@@ -189,6 +191,7 @@ def exercise_09() -> None:
     mean = count / samples
     sem = sqrt(mean * (1 - mean) / samples)
     exact = 0.021128
+    print("Three-of-a-kind chance")
     print(f"Exact      : {exact * 100} %")
     print(f"Monte Carlo: ({mean * 100:.3f} +/- {sem * 100:.3f}) %")
     print(f"z-score    : {(mean - exact) / sem}")
