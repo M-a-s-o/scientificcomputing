@@ -33,7 +33,7 @@ def exercise_07() -> None:
     print("Exercise 7:")
     fractal = "mandelbrot"
     fractal = "burning ship"
-    Nmax = 512
+    Nmax = 128
     Nx = 1280
     Ny = 720
 
