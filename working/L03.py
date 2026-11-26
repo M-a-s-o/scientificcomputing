@@ -3,6 +3,7 @@ import numpy as np
 
 
 def exercise_02() -> None:
+    print("Exercise 2:")
     sM_ax = np.array([0.39, 0.72, 1.00, 1.52, 5.20, 9.54, 19.22, 30.06, 39.48])
     period = np.array(
         [0.24, 0.62, 1.00, 1.88, 11.86, 29.46, 84.01, 164.8, 248.09]
@@ -29,10 +30,12 @@ def exercise_02() -> None:
 
 
 def exercise_07() -> None:
+    print("Exercise 7:")
     fractal = "mandelbrot"
-    # fractal = "burning ship"
-    Nmax = 1024
-    N = 256
+    fractal = "burning ship"
+    Nmax = 512
+    Nx = 1280
+    Ny = 720
 
     def get_mandelbrot(z, c):
         return z * z + c
@@ -43,42 +46,52 @@ def exercise_07() -> None:
     if "mandelbrot" in fractal.lower():
         next_iter = get_mandelbrot
         max_abs = 2
-        xmin, xmax = -2.5, 1
+        xmin, xmax = -2, 1
         ymin, ymax = -1.5, 1.5
     elif "burning ship" in fractal.lower():
         next_iter = get_burning_ship
         max_abs = 4
-        xmin, xmax = -3, 2
-        ymin, ymax = -2, 1
+        # Full ship
+        xmin, xmax = -2.6, 1.9
+        ymin, ymax = -2.3, 1.9
+        # Ship on lower left
+        xmin, xmax = -1.815, -1.7
+        ymin, ymax = -0.085, 0.012
     else:
         raise UserWarning("Choose either Mandelbrot or Burning Ship fractals")
 
-    x = np.linspace(xmin, xmax, N)
-    y = np.linspace(ymin, ymax, N)
+    x = np.linspace(xmin, xmax, Nx)
+    y = np.linspace(ymin, ymax, Ny)
 
-    xv, _ = np.meshgrid(x, y, indexing="ij")
-    c = xv + 1j * y
+    c = x[:, np.newaxis] + 1j * y[np.newaxis, :]
 
-    z = np.zeros((N, N), dtype=np.complex128)
-    mask = np.ones_like(z)
-    counts = np.zeros_like(z, dtype=np.int64)
+    z = np.zeros_like(c)
+    mask = np.ones(z.shape, dtype=bool)
+    counts = np.zeros(z.shape, dtype=np.int64)
 
-    iters = 0
-    # while np.any(mask) or iters < Nmax:
-    while iters < Nmax:
-        z = next_iter(z, c)
-        mask = np.where(np.abs(z) <= max_abs)
+    for _ in range(Nmax):
+        z[mask] = next_iter(z[mask], c[mask])
+        mask &= np.abs(z) <= max_abs
         counts[mask] += 1
-        iters += 1
+        if not mask.any():
+            break
 
-    counts = Nmax / counts
-    counts[counts == np.inf] = Nmax
+    counts[counts == 0] = 1
+    vals = np.log(Nmax / counts)
     _, ax = plt.subplots()
-    ax.imshow(counts.T, aspect=(ymax - ymin) / (xmax - xmin))
+    ax.imshow(
+        vals.T,
+        extent=(xmin, xmax, ymin, ymax),
+        aspect="equal",
+        origin="lower",
+    )
+    if "burning ship" in fractal.lower():
+        ax.invert_yaxis()
     plt.show()
 
 
 def exercise_09() -> None:
+    print("Exercise 9:")
     print("Cough")
 
 
